@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "compile": "tsc -w",
+    "start": "nodemon dist/index.js"
+  },
+  "devDependencies": {
+    "typescript": "^3.5.3"
+  }
+}
