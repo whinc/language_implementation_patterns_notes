@@ -1,24 +1,25 @@
-import Lexer from './Lexer'
-import Token from "./Token";
+import Lexer from '../lexer/Lexer'
+import Token from "../lexer/Token";
 
-export default class ListLexer extends Lexer {
+export default class LookaheadLexer extends Lexer {
   static NAME = 1
   static COMMA = 2
   static LBRACK = 3
   static RBRACK = 4
+  static EQUALS = 5
 
-  static tokenNames = ['<EOF>', 'NAME', 'COMMA', 'LBRACK', 'RBRACK']
+  static tokenNames = ['<EOF>', 'NAME', 'COMMA', 'LBRACK', 'RBRACK', 'EQUALS']
 
   constructor(input: string) {
     super(input)
   }
 
   getTokenName (tokenType: number): string {
-    return ListLexer.tokenNames[tokenType]
+    return LookaheadLexer.tokenNames[tokenType]
   }
 
   nextToken(): Token {
-    while (this.c !== ListLexer.EOF) {
+    while (this.c !== LookaheadLexer.EOF) {
       switch (this.c) {
         case " ":
         case "\t":
@@ -26,21 +27,24 @@ export default class ListLexer extends Lexer {
         case "\r":
           this.WS()
           continue
+        case '=':
+          this.consume();
+          return new Token(LookaheadLexer.EQUALS, '=')
         case ',':
           this.consume()
-          return new Token(ListLexer.COMMA, ',')
+          return new Token(LookaheadLexer.COMMA, ',')
         case '[':
           this.consume()
-          return new Token(ListLexer.LBRACK, '[')
+          return new Token(LookaheadLexer.LBRACK, '[')
         case ']':
           this.consume()
-          return new Token(ListLexer.RBRACK, ']')
+          return new Token(LookaheadLexer.RBRACK, ']')
         default:
           if (this.isLetter()) return this.NAME()
           else throw new Error('invalid character:' + this.c)
       }
     }
-    return new Token(ListLexer.EOF_TYPE, ListLexer.EOF)
+    return new Token(LookaheadLexer.EOF_TYPE, LookaheadLexer.EOF)
   }
 
   WS () {
@@ -54,7 +58,7 @@ export default class ListLexer extends Lexer {
       name += this.c
       this.consume()
     }
-    return new Token(ListLexer.NAME, name)
+    return new Token(LookaheadLexer.NAME, name)
   }
 
   isLetter () {

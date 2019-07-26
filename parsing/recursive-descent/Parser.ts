@@ -9,12 +9,11 @@ export default class Parser {
   }
 
   consume () {
-    console.log('consume ' + this.lookahead.toString())
     this.lookahead = this.lexer.nextToken()
   }
 
   match(x: number) {
     if (this.lookahead.type === x) this.consume()
-    else throw new Error(`expecting ${Token.getTokenName(x)}; found ${Token.getTokenName(this.lookahead.type)}`)
+    else throw new Error(`expecting ${this.lexer.getTokenName(x)}; found ${this.lexer.getTokenName(this.lookahead.type)}`)
   }
 }
