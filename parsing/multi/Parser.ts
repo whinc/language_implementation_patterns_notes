@@ -39,7 +39,7 @@ export default class Parser {
     if (this.LA(1) === x) this.consume();
     else
       throw new Error(
-        `expecting ${this.lexer.getTokenName(
+        `${this.lexer.position()}: expecting ${this.lexer.getTokenName(
           x
         )}; found ${this.lexer.getTokenName(this.LA(1))}`
       );

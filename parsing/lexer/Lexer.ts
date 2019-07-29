@@ -23,7 +23,11 @@ export default abstract class Lexer {
   // 如果匹配就消耗一个字符
   match(x: string): void {
     if (this.c === x) this.consume();
-    else throw new Error(`expecting: ${x}, found: ${this.c}`);
+    else throw new Error(`${this.p}: expecting: ${x}, found: ${this.c}`);
+  }
+
+  position () {
+    return this.p
   }
 
   // 获取下一个词法单元
