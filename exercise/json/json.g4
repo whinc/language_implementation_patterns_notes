@@ -1,0 +1,13 @@
+grammar json;
+json: element;
+element: WS? value WS?;
+value: object | array | string | number | 'true' | 'false' | 'null';
+object: '{' members '}';
+members: member (',' member)*;
+member: WS? string WS? ':' element;
+string: '"' CHARS? '"';
+array: '[' (element (',' element)*)? ']';
+number: NUMBERS;
+NUMBERS: ('0'..'9')+;
+CHARS: ('a'..'z' | 'A'..'Z' | '0'..'9' | '_')+;
+WS: ('\u0020' | '\u000A' | '\u000D' | '\u0009')+;
