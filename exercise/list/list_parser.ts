@@ -42,16 +42,6 @@ export function parseListTokens(source: string): Token[] {
  * 
  * 解析列表，列表支持嵌套，例如 "[a, b, [c, d]]"
  * 
- * 列表文法：
- * grammar list;
- * list: '[' elements ']';
- * elements: element (',' element)*;
- * element: NAME | list;
- * 
- * 后者列表文法：
- * grammar list2;
- * list2: '[' list2 (',' list2)* ']' | NAME;
- * 
  * @param source 
  * @returns 返回解析树
  */
