@@ -1,6 +1,6 @@
-import {tokenize, parse, visit} from './vector_math'
+import {tokenize, parse, traverser, codeGen} from './vector_math'
 
-let code = `
+const code1 = `
   x = 1 + 2
   y = 1*2+3
   z = [1, 2] + [3, 4]
@@ -10,17 +10,26 @@ let code = `
   print a + 1
 `
 
-// test('test tokenize', () => {
-//   const tokens = tokenize(code)
-//   console.log('code:', code)
-//   console.log('tokens:', tokens)
-// })
+const code2 = `
+  x = 1 + 2
+`
 
-test('test parse', () => {
-  // code = 'x = 1+2'
+const code = code1
+
+test('test vector math', () => {
   const tokens = tokenize(code)
   console.log('code:', code)
   console.log('tokens:', tokens)
   const ast = parse(tokens)
   console.log('ast:', JSON.stringify(ast, null, 2))
+  console.log('codeGen:', codeGen(ast))
+  traverser(ast, {
+    PlusExpr(node, parent) {
+      let tmp = node.left
+      node.left = node.right
+      node.right = tmp
+    }
+  })
+  console.log('ast(after):', JSON.stringify(ast, null, 2))
+  console.log('codeGen(after):', codeGen(ast))
 })

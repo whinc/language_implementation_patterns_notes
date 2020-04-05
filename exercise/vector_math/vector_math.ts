@@ -185,4 +185,69 @@ export function parse(tokens: Token[]): AST {
   }
 }
 
-export function visit(ast: AST) {}
+export function traverser(ast: AST, visitor: {[key: string]: (node: AST, parent: AST | null) => void}) {
+  function traverserNode(node: AST, parent: AST | null) {
+    if (visitor[node.type]) {
+      visitor[node.type](node, parent)
+    }
+    switch(node.type) {
+      case 'Program':
+        node.body.forEach((item: AST) => traverserNode(item, node))
+        break
+      case 'PlusExpr':
+        traverserNode(node.left, node)
+        traverserNode(node.right, node)
+        break
+      case 'MultiExpr':
+        traverserNode(node.left, node)
+        traverserNode(node.right, node)
+        break
+      case 'DotExpr':
+        traverserNode(node.left, node)
+        traverserNode(node.right, node)
+        break
+      case 'Vector':
+        node.value.forEach((item: AST) => traverserNode(item, node))
+        break
+      case "CallExpression":
+        node.params.forEach((item: AST) => traverserNode(item, node))
+        break
+      case 'Assignment':
+        traverserNode(node.left, node)
+        traverserNode(node.right, node)
+        break
+      case 'identifier':
+      case 'number':
+        break
+      default:
+        throw new Error('Unknow node type: "' + node.type + '"')
+    }
+  }
+
+  return traverserNode(ast, null)
+}
+
+
+export function codeGen(ast: AST): string {
+  switch(ast.type) {
+    case 'Program':
+      return ast.body.map((item: any) => codeGen(item)).join('\n')
+    case 'PlusExpr':
+      return `${codeGen(ast.left)} + ${codeGen(ast.right)}`
+    case 'MultiExpr':
+      return `${codeGen(ast.left)} * ${codeGen(ast.right)}`
+    case 'DotExpr':
+      return `${codeGen(ast.left)} . ${codeGen(ast.right)}`
+    case 'Vector':
+      return '[' + ast.value.map((item: any) => codeGen(item)).join(', ') + ']'
+    case 'CallExpression':
+      return ast.name + ' ' + ast.params.map((item: any) => codeGen(item)).join(' ')
+    case 'Assignment':
+      return `${codeGen(ast.left)} = ${codeGen(ast.right)}`
+    case 'identifier':
+    case 'number':
+      return ast.value
+    default: 
+      return 'unkown: "' + ast.type + '"'
+  }
+}
